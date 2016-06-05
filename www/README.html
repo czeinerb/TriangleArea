@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Calculating the area of a triangle with Shiny</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Calculating the area of a triangle with Shiny</h1>
+
+<p>Author: Bela Czeiner</p>
+
+<p>Date: Sun Jun 05 19:36:28 2016</p>
+
+<h1>Motivation</h1>
+
+<p>Calculating the are of a complex polygon is relatively simple for humans as we can easily break it down to smaller components. But it can be hard to create algorithms that are able to identify which points belong to a polygon and what is outside.
+See for example the orange areas in the following example: </p>
+
+<p><img src="data:image/png;base64,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" alt="Polygon example"/></p>
+
+<p>There are various packages in are (for example &#39;rgeos&#39;, &#39;pracma&#39; or &#39;sp&#39;) to provide solutions for this problem but I wanted to test the fundamentals of another solution.</p>
+
+<p>The core idea is that it is easy to calculate the area of a square around a polygon and if we can calculate the ratio of the area that is inside teh polygon bersus the whole suare then we can calculate the are of it.</p>
+
+<p>This solution then calcuates the area of a triangle using two <em>methods</em> and compares the results:</p>
+
+<ol>
+<li><p>Calculate it using Heron&#39;s formula: this classic geometry method will provide the precise area of the triangle<sup>1<sup>.</sup></sup></p></li>
+<li><p>A geometric approximation will split the area of the surrounding square to smaller units<sup>2<sup>,</sup></sup> associating a grid point to all, and identifying whether these points are inside or outside of the triangle: after this procedure it will simply count the number of grid points inside the triangle and calculates the triangle area with it&#39;s ratio to all of the points</p></li>
+</ol>
+
+<p><em>Note:</em> <sup>1</sup> , <sup>2</sup> This method simplification of the original quuestion as it only uses the simplest possible polygon and it does not cater of the shape of the small areas represented by the grid points. Consequenttly we don&#39;t expect great precision of the calculations.</p>
+
+<p><em>For more info go to: <a href="http://www.rpubs.com/czeinerb/TriangleArea">http://www.rpubs.com/czeinerb/TriangleArea</a></em></p>
+
+<h1>How to use the appplication</h1>
+
+<h3>Parameters:</h3>
+
+<p><strong>Coordinates</strong> of the cornerns of a triangle in a Cartesian coordinate system. </p>
+
+<p><strong>Granularity</strong> determines the number of data points for the the approximation: number of data points are Granularity squared.</p>
+
+<p>The application starts with some default coordinates and granularity. The user need to enter or amend these coordinates of the triangle and adjust the granularity. </p>
+
+<p>&ndash;EOF&ndash;</p>
+
+</body>
+
+</html>
